@@ -1,0 +1,19 @@
+@{ ViewData["Title"] = "حساب جديد"; }
+<div class="card login-box">
+  <div class="card-body p-4">
+    <div class="text-center mb-4">
+      <i class="bi bi-person-heart text-brand" style="font-size:3rem"></i>
+      <h4 class="mt-2 text-brand fw-bold">إنشاء حساب عميل</h4>
+    </div>
+    @if (ViewBag.Error != null) { <div class="alert alert-danger py-2">@ViewBag.Error</div> }
+    <form method="post" asp-action="Register">
+      <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+      <div class="mb-3"><label class="form-label">الاسم</label><input name="fullName" class="form-control" required /></div>
+      <div class="mb-3"><label class="form-label">رقم الجوال</label><input name="phone" class="form-control" placeholder="05xxxxxxxx" dir="ltr" required />
+        <div class="form-text">يُستخدم لتسجيل الدخول ولتأكيد حجزك عبر واتساب</div></div>
+      <div class="mb-3"><label class="form-label">كلمة المرور</label><input name="password" type="password" class="form-control" autocomplete="new-password" required /></div>
+      <button class="btn btn-brand w-100 py-2">إنشاء الحساب</button>
+    </form>
+    <div class="text-center mt-3 small">لديك حساب؟ <a asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl">سجّل الدخول</a></div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+@model List<Booking>
+@{ ViewData["Title"] = "الحجوزات"; string f = ViewBag.Filter; }
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <h4 class="text-brand fw-bold mb-0">الحجوزات</h4>
+  <div class="btn-group">
+    <a class="btn btn-sm @(f == "upcoming" ? "btn-brand" : "btn-outline-secondary")" asp-action="Index">القادمة</a>
+    <a class="btn btn-sm @(f == "pending" ? "btn-brand" : "btn-outline-secondary")" asp-action="Index" asp-route-filter="pending">بانتظار التأكيد</a>
+    <a class="btn btn-sm @(f == "past" ? "btn-brand" : "btn-outline-secondary")" asp-action="Index" asp-route-filter="past">السابقة</a>
+  </div>
+</div>
+<div class="card stat">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>الكود</th><th>التاريخ والوقت</th><th>الخدمة</th><th>الأخصائي</th><th>العميل</th><th>الحالة</th><th></th></tr></thead>
+      <tbody>
+      @foreach (var b in Model)
+      {
+        var badge = b.Status switch { BookingStatus.Confirmed => "bg-success", BookingStatus.Pending => "bg-warning text-dark", BookingStatus.Completed => "bg-secondary", _ => "bg-danger" };
+        var cw = Phones.Normalize(b.Customer.PhoneNumber);
+        <tr>
+          <td dir="ltr" class="fw-bold">@b.Code</td>
+          <td>@b.Date.ToString("yyyy-MM-dd")<div class="small text-muted">@b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")</div></td>
+          <td>@b.Service.Name<div class="small text-muted">@b.Price.ToString("0.##") ر.س</div></td>
+          <td>@b.Employee.FullName</td>
+          <td>@b.Customer.FullName<div class="small"><a target="_blank" href="https://wa.me/@cw"><i class="bi bi-whatsapp text-success"></i> @b.Customer.PhoneNumber</a></div></td>
+          <td><span class="badge @badge">@b.StatusLabel</span></td>
+          <td class="text-nowrap">
+            @if (b.Status == BookingStatus.Pending)
+            { <form asp-action="Confirm" asp-route-id="@b.Id" method="post" class="d-inline"><button class="btn btn-sm btn-success">تأكيد</button></form> }
+            @if (b.Status == BookingStatus.Confirmed)
+            { <form asp-action="Complete" asp-route-id="@b.Id" method="post" class="d-inline"><button class="btn btn-sm btn-outline-secondary">تم</button></form> }
+            @if (b.Status is BookingStatus.Pending or BookingStatus.Confirmed)
+            { <form asp-action="Cancel" asp-route-id="@b.Id" method="post" class="d-inline" onsubmit="return confirm('إلغاء الحجز؟')"><button class="btn btn-sm btn-outline-danger">إلغاء</button></form> }
+          </td>
+        </tr>
+      }
+      @if (!Model.Any()) { <tr><td colspan="7" class="text-center text-muted py-4">لا توجد حجوزات</td></tr> }
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="small text-muted mt-2">اضغط تأكيد بعد الاتفاق مع العميل على واتساب، ويُحجز الموعد للأخصائي تلقائيًا بمجرد طلب العميل لمدة 3 ساعات إلى حين تأكيده.</div>

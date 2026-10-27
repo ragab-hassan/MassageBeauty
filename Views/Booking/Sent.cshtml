@@ -1,0 +1,22 @@
+@model Booking
+@{ ViewData["Title"] = "تم إنشاء طلب الحجز"; var wa = (string)ViewBag.Wa; }
+<div class="card stat p-4 mx-auto text-center" style="max-width:520px">
+  <i class="bi bi-whatsapp text-success" style="font-size:3rem"></i>
+  <h5 class="fw-bold mt-2">تم تسجيل طلب حجزك</h5>
+  <p class="text-muted small mb-2">أكمل الحجز عبر واتساب المركز لتأكيده</p>
+  <div class="fs-3 fw-bold text-brand" dir="ltr">@Model.Code</div>
+  <table class="table table-sm text-start mt-3" style="text-align:right">
+    <tr><th>المركز</th><td>@Model.Subscriber.BusinessName</td></tr>
+    <tr><th>الخدمة</th><td>@Model.Service.Name</td></tr>
+    <tr><th>الأخصائي</th><td>@Model.Employee.FullName</td></tr>
+    <tr><th>التاريخ</th><td>@Model.Date.ToString("yyyy-MM-dd")</td></tr>
+    <tr><th>الوقت</th><td>@Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</td></tr>
+    <tr><th>السعر</th><td>@Model.Price.ToString("0.##") ر.س</td></tr>
+  </table>
+  <a href="@wa" class="btn btn-success btn-lg" id="waBtn"><i class="bi bi-whatsapp"></i> فتح واتساب المركز</a>
+  <div class="small text-muted mt-2" id="redir">سيتم تحويلك تلقائيًا خلال ثوانٍ...</div>
+  <a asp-action="Mine" class="small mt-3">حجوزاتي</a>
+</div>
+@section Scripts {
+<script>setTimeout(() => { location.href = document.getElementById('waBtn').href; }, 2500);</script>
+}

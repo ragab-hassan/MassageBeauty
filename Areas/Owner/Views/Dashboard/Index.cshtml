@@ -1,0 +1,65 @@
+@model List<Subscriber>
+@{
+  ViewData["Title"] = "لوحة التحكم";
+  var active = Model.Count(s => s.State == "active");
+  var soon = Model.Count(s => s.State == "soon");
+  var expired = Model.Count(s => s.State == "expired" || s.State == "none");
+  var revenue = Model.SelectMany(s => s.Subscriptions).Sum(x => x.PricePaid);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0 text-brand fw-bold">المشتركون</h4>
+  <a asp-action="Create" class="btn btn-brand"><i class="bi bi-plus-lg"></i> مشترك جديد</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card stat p-3"><div class="text-muted small">إجمالي المشتركين</div><div class="num">@Model.Count</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat p-3"><div class="text-muted small">اشتراكات سارية</div><div class="num text-success">@active</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat p-3"><div class="text-muted small">تنتهي خلال 7 أيام</div><div class="num text-warning">@soon</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat p-3"><div class="text-muted small">منتهية</div><div class="num text-danger">@expired</div></div></div>
+</div>
+<div class="card stat p-3 mb-4"><span class="text-muted">إجمالي الإيرادات المسجلة:</span> <b class="text-brand">@revenue.ToString("N2") ر.س</b></div>
+
+<input id="q" class="form-control mb-3" placeholder="بحث باسم النشاط أو المدينة أو الهاتف..." />
+
+<div class="row g-3" id="cards">
+@foreach (var s in Model)
+{
+  var cur = s.Current;
+  var badge = s.State switch { "active" => ("bg-success", "ساري"), "soon" => ("bg-warning text-dark", "ينتهي قريبًا"), "expired" => ("bg-danger", "منتهي"), _ => ("bg-secondary", "بدون اشتراك") };
+  <div class="col-md-6 col-lg-4 sub-item" data-text="@s.BusinessName @s.City @s.Phone @s.OwnerName">
+    <a asp-action="Details" asp-route-id="@s.Id" class="text-decoration-none text-reset">
+      <div class="card sub-card @s.State h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="fw-bold mb-1">@s.BusinessName</h5>
+            <span class="badge @badge.Item1">@badge.Item2</span>
+          </div>
+          <div class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> @(string.IsNullOrWhiteSpace(s.City) ? "-" : s.City)</div>
+          @if (cur != null)
+          {
+            <div class="small"><i class="bi bi-calendar-event"></i> البداية: <b>@cur.StartDate.ToString("yyyy-MM-dd")</b></div>
+            <div class="small"><i class="bi bi-calendar-x"></i> النهاية: <b>@cur.EndDate.ToString("yyyy-MM-dd")</b></div>
+            <div class="small"><i class="bi bi-hourglass-split"></i> الفترة: <b>@cur.PeriodDays يوم</b> (@(cur.DaysLeft >= 0 ? $"متبقي {cur.DaysLeft}" : $"منتهي منذ {-cur.DaysLeft}"))</div>
+            <div class="small"><i class="bi bi-cash"></i> السعر: <b>@cur.PricePaid.ToString("N2") ر.س</b> · @cur.Plan.Name</div>
+          }
+          <hr class="my-2" />
+          <div class="d-flex justify-content-between small">
+            <span><i class="bi bi-people"></i> @s.EmployeesCount عامل</span>
+            <span class="@(s.AllowRenewal ? "text-success" : "text-secondary")"><i class="bi bi-arrow-repeat"></i> @(s.AllowRenewal ? "التجديد مسموح" : "التجديد موقوف")</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+}
+</div>
+@if (!Model.Any()) { <div class="text-center text-muted py-5">لا يوجد مشتركون بعد. ابدأ بإضافة أول مشترك.</div> }
+
+@section Scripts {
+<script>
+  document.getElementById('q').addEventListener('input', e => {
+    const v = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.sub-item').forEach(el => el.style.display = el.dataset.text.toLowerCase().includes(v) ? '' : 'none');
+  });
+</script>
+}

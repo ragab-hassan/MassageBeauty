@@ -1,0 +1,27 @@
+@model List<Service>
+@{ ViewData["Title"] = "الخدمات"; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="text-brand fw-bold mb-0">خدمات وباقات وعروض المركز</h4>
+  <a asp-action="Edit" class="btn btn-brand"><i class="bi bi-plus-lg"></i> إضافة</a>
+</div>
+<div class="row g-3">
+@foreach (var s in Model)
+{
+  <div class="col-md-6 col-lg-4">
+    <div class="card svc-card h-100 @(s.IsActive ? "" : "opacity-50")">
+      <span class="badge @(s.Kind == ServiceKind.Offer ? "bg-danger" : s.Kind == ServiceKind.Package ? "bg-warning text-dark" : "bg-secondary") kind-badge">@s.KindLabel</span>
+      @Html.Thumb(s.ImageUrl)
+      <div class="card-body">
+        <div class="fw-bold">@s.Name @if (!s.IsActive) { <span class="badge bg-secondary">موقوفة</span> }</div>
+        <div class="small text-muted">@s.DurationMinutes دقيقة · <span class="price">@s.Price.ToString("0.##") ر.س</span></div>
+      </div>
+      <div class="card-footer bg-transparent border-0 d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">تعديل</a>
+        <form asp-action="Toggle" asp-route-id="@s.Id" method="post"><button class="btn btn-sm btn-outline-secondary">@(s.IsActive ? "إيقاف" : "تفعيل")</button></form>
+        <form asp-action="Delete" asp-route-id="@s.Id" method="post" onsubmit="return confirm('حذف نهائي؟')"><button class="btn btn-sm btn-outline-danger">حذف</button></form>
+      </div>
+    </div>
+  </div>
+}
+</div>
+@if (!Model.Any()) { <div class="text-center text-muted py-5">أضف أول خدمة لتظهر للعملاء في الصفحة العامة.</div> }

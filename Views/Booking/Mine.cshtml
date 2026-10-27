@@ -1,0 +1,28 @@
+@model List<Booking>
+@{ ViewData["Title"] = "حجوزاتي"; var wa = (Dictionary<int, string>)ViewBag.Wa; }
+<h4 class="text-brand fw-bold mb-3">حجوزاتي</h4>
+@foreach (var b in Model)
+{
+  var badge = b.Status switch { BookingStatus.Confirmed => "bg-success", BookingStatus.Pending => "bg-warning text-dark", BookingStatus.Completed => "bg-secondary", _ => "bg-danger" };
+  <div class="card stat p-3 mb-3">
+    <div class="d-flex flex-wrap justify-content-between gap-2">
+      <div>
+        <div class="fw-bold">@b.Service.Name <span class="text-muted small">· @b.Subscriber.BusinessName</span></div>
+        <div class="small text-muted">الأخصائي: @b.Employee.FullName</div>
+        <div class="small"><i class="bi bi-calendar-event"></i> @b.Date.ToString("yyyy-MM-dd") · @b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")</div>
+        <div class="small">كود الحجز: <b dir="ltr">@b.Code</b></div>
+      </div>
+      <div class="text-end">
+        <span class="badge @badge">@b.StatusLabel</span>
+        <div class="mt-2 d-flex gap-2 justify-content-end">
+          @if (b.Status == BookingStatus.Pending) { <a href="@wa[b.Id]" class="btn btn-sm btn-success"><i class="bi bi-whatsapp"></i> واتساب</a> }
+          @if (b.Status is BookingStatus.Pending or BookingStatus.Confirmed)
+          {
+            <form asp-action="Cancel" asp-route-id="@b.Id" method="post" onsubmit="return confirm('إلغاء الحجز؟')"><button class="btn btn-sm btn-outline-danger">إلغاء</button></form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+@if (!Model.Any()) { <div class="text-center text-muted py-5">لا توجد حجوزات بعد. <a asp-controller="Home" asp-action="Index">تصفّح الخدمات</a></div> }

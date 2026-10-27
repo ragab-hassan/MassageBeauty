@@ -1,0 +1,51 @@
+@model Service
+@{
+  ViewData["Title"] = "اختيار الموعد";
+  var emp = (AppUser)ViewBag.Employee;
+  var date = (DateTime)ViewBag.Date;
+  var slots = (List<TimeSpan>)ViewBag.Slots;
+  var min = ((DateTime)ViewBag.MinDate).ToString("yyyy-MM-dd");
+  var max = ((DateTime)ViewBag.MaxDate).ToString("yyyy-MM-dd");
+}
+<a asp-controller="Center" asp-action="Employees" asp-route-serviceId="@Model.Id" class="text-decoration-none">&rarr; تغيير الأخصائي</a>
+<div class="card stat p-3 my-3">
+  <div class="row g-3 align-items-center">
+    <div class="col-md-6">
+      <span class="badge bg-secondary">@Model.KindLabel</span> <b>@Model.Name</b>
+      <div class="small text-muted">@Model.Subscriber!.BusinessName · @Model.DurationMinutes دقيقة · <span class="price">@Model.Price.ToString("0.##") ر.س</span></div>
+    </div>
+    <div class="col-md-6 d-flex align-items-center gap-2">
+      @Html.Thumb(emp.PhotoUrl, "thumb-sm")
+      <div><div class="fw-bold">@emp.FullName</div><div class="small text-muted">@emp.Title</div></div>
+    </div>
+  </div>
+</div>
+
+<h5 class="text-brand fw-bold mb-3">اختر اليوم</h5>
+<form method="get" class="mb-4">
+  <input type="hidden" name="serviceId" value="@Model.Id" />
+  <input type="hidden" name="employeeId" value="@emp.Id" />
+  <input type="date" name="date" value="@date.ToString("yyyy-MM-dd")" min="@min" max="@max" class="form-control" style="max-width:240px" onchange="this.form.submit()" />
+</form>
+
+<h5 class="text-brand fw-bold mb-3">اختر الوقت</h5>
+@if (slots.Any())
+{
+  <form asp-action="Confirm" method="post">
+    <input type="hidden" name="serviceId" value="@Model.Id" />
+    <input type="hidden" name="employeeId" value="@emp.Id" />
+    <input type="hidden" name="date" value="@date.ToString("yyyy-MM-dd")" />
+    <div class="d-flex flex-wrap gap-2">
+      @foreach (var t in slots)
+      {
+        var tt = t.ToString(@"hh\:mm");
+        <button name="time" value="@tt" class="btn btn-outline-primary slot-btn">@tt</button>
+      }
+    </div>
+  </form>
+  <div class="alert alert-warning small mt-4"><i class="bi bi-whatsapp"></i> بعد اختيار الوقت سيتم تحويلك تلقائيًا إلى واتساب المركز مع كود الحجز. <b>لا يتم تأكيد الحجز إلا بعد التواصل مع المركز عبر واتساب.</b></div>
+}
+else
+{
+  <div class="text-center text-muted py-4">لا توجد مواعيد متاحة في هذا اليوم، جرّب يومًا آخر.</div>
+}

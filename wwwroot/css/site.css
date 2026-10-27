@@ -1,0 +1,37 @@
+:root { --brand:#8e3b6b; --brand-dark:#5e2446; --rose:#f6e7ef; --gold:#c9a24b; }
+body { font-family:'Cairo',sans-serif; background:#faf6f9; color:#2b2230; }
+.app-nav { background:linear-gradient(90deg,var(--brand-dark),var(--brand)); }
+.app-nav .navbar-brand, .app-nav .nav-link { color:#fff !important; }
+.app-nav .nav-link:hover { color:var(--gold) !important; }
+.btn-brand { background:var(--brand); color:#fff; border:0; }
+.btn-brand:hover { background:var(--brand-dark); color:#fff; }
+.text-brand { color:var(--brand); }
+.stat { border:0; border-radius:14px; box-shadow:0 2px 10px rgba(94,36,70,.08); }
+.stat .num { font-size:1.8rem; font-weight:700; color:var(--brand); }
+.sub-card { border:0; border-radius:16px; box-shadow:0 2px 12px rgba(94,36,70,.10); transition:.15s; border-top:5px solid #ccc; }
+.sub-card:hover { transform:translateY(-3px); box-shadow:0 8px 22px rgba(94,36,70,.18); }
+.sub-card.active { border-top-color:#2e9e6a; }
+.sub-card.soon { border-top-color:#e5a100; }
+.sub-card.expired, .sub-card.none { border-top-color:#d6455d; }
+.login-box { max-width:420px; margin:6vh auto; border:0; border-radius:18px; box-shadow:0 10px 30px rgba(94,36,70,.15); }
+.plan-card { border:0; border-radius:16px; box-shadow:0 2px 12px rgba(94,36,70,.10); }
+.plan-card.off { opacity:.55; }
+.old-price { text-decoration:line-through; color:#999; }
+
+/* ===== واجهة العميل ===== */
+.hero { background:linear-gradient(135deg,var(--brand-dark),var(--brand) 60%,#b95b8c); color:#fff; border-radius:20px; padding:2rem 1.5rem; }
+.thumb { width:100%; aspect-ratio:4/3; background:var(--rose); display:flex; align-items:center; justify-content:center; overflow:hidden; color:var(--brand); font-size:3rem; }
+.thumb img { width:100%; height:100%; object-fit:cover; }
+.thumb-sm { width:64px; height:64px; border-radius:50%; background:var(--rose); display:flex; align-items:center; justify-content:center; overflow:hidden; color:var(--brand); font-size:1.5rem; flex:none; }
+.thumb-sm img { width:100%; height:100%; object-fit:cover; }
+.thumb-lg { width:100px; height:100px; border-radius:50%; background:var(--rose); display:flex; align-items:center; justify-content:center; overflow:hidden; color:var(--brand); font-size:2.5rem; border:4px solid #fff; flex:none; }
+.thumb-lg img { width:100%; height:100%; object-fit:cover; }
+.svc-card { border:0; border-radius:16px; overflow:hidden; box-shadow:0 2px 12px rgba(94,36,70,.10); transition:.15s; position:relative; }
+.svc-card:hover { transform:translateY(-3px); box-shadow:0 8px 22px rgba(94,36,70,.18); }
+.kind-badge { position:absolute; top:10px; right:10px; z-index:2; }
+.center-cover { height:180px; border-radius:18px; background:linear-gradient(135deg,var(--brand-dark),var(--brand)); overflow:hidden; }
+.center-cover img { width:100%; height:100%; object-fit:cover; }
+.slot-btn { min-width:88px; }
+.emp-card { border:0; border-radius:16px; box-shadow:0 2px 12px rgba(94,36,70,.10); text-align:center; transition:.15s; }
+.emp-card:hover { transform:translateY(-3px); box-shadow:0 8px 22px rgba(94,36,70,.18); }
+.price { color:var(--brand); font-weight:700; font-size:1.15rem; }

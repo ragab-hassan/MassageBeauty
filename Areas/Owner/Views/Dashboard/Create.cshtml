@@ -1,0 +1,56 @@
+@model CreateSubscriberVm
+@{
+  ViewData["Title"] = "مشترك جديد";
+  var plans = (List<Plan>)ViewBag.Plans;
+}
+<h4 class="text-brand fw-bold mb-3">إضافة مشترك جديد</h4>
+<form asp-action="Create" method="post" class="card stat p-4">
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+  <h6 class="text-brand">بيانات النشاط</h6>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6"><label class="form-label">اسم النشاط (مركز/صالون)</label><input asp-for="BusinessName" class="form-control" /><span asp-validation-for="BusinessName" class="text-danger small"></span></div>
+    <div class="col-md-6"><label class="form-label">اسم المسؤول</label><input asp-for="OwnerName" class="form-control" /><span asp-validation-for="OwnerName" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">رقم الهاتف</label><input asp-for="Phone" class="form-control" placeholder="9665xxxxxxxx" /><span asp-validation-for="Phone" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">المدينة</label><input asp-for="City" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">العنوان</label><input asp-for="Address" class="form-control" /></div>
+    <div class="col-12"><label class="form-label">ملاحظات</label><textarea asp-for="Notes" rows="2" class="form-control"></textarea></div>
+  </div>
+
+  <h6 class="text-brand">حساب الدخول</h6>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6"><label class="form-label">اسم المستخدم (إنجليزي)</label><input asp-for="UserName" class="form-control" dir="ltr" /><span asp-validation-for="UserName" class="text-danger small"></span></div>
+    <div class="col-md-6"><label class="form-label">كلمة المرور</label><input asp-for="Password" class="form-control" dir="ltr" /><span asp-validation-for="Password" class="text-danger small"></span></div>
+  </div>
+
+  <h6 class="text-brand">الاشتراك</h6>
+  <div class="row g-3 mb-3">
+    <div class="col-md-5">
+      <label class="form-label">الباقة</label>
+      <select asp-for="PlanId" class="form-select" id="planId">
+        @foreach (var p in plans)
+        {
+          <option value="@p.Id" data-price="@p.EffectivePrice.ToString(System.Globalization.CultureInfo.InvariantCulture)" data-days="@p.DurationDays">@p.Name - @p.DurationDays يوم - @p.EffectivePrice.ToString("N2") ر.س</option>
+        }
+      </select>
+    </div>
+    <div class="col-md-3"><label class="form-label">تاريخ البداية</label><input asp-for="StartDate" type="date" class="form-control" id="start" /></div>
+    <div class="col-md-2"><label class="form-label">تاريخ النهاية</label><input class="form-control" id="end" readonly /></div>
+    <div class="col-md-2"><label class="form-label">السعر (ر.س)</label><input asp-for="PricePaid" type="number" step="0.01" min="0" class="form-control" id="price" /></div>
+  </div>
+  <div><button class="btn btn-brand px-4">حفظ وإنشاء الحساب</button> <a asp-action="Index" class="btn btn-light">إلغاء</a></div>
+</form>
+
+@section Scripts {
+<script>
+  const plan = document.getElementById('planId'), start = document.getElementById('start'), end = document.getElementById('end'), price = document.getElementById('price');
+  function calc(){
+    const o = plan.options[plan.selectedIndex]; if(!o) return;
+    const d = new Date(start.value); d.setDate(d.getDate() + parseInt(o.dataset.days));
+    end.value = isNaN(d) ? '' : d.toISOString().slice(0,10);
+  }
+  plan.addEventListener('change', () => { price.value = plan.options[plan.selectedIndex].dataset.price; calc(); });
+  start.addEventListener('change', calc);
+  if(!price.value || price.value === '0') price.value = plan.options[plan.selectedIndex]?.dataset.price ?? 0;
+  calc();
+</script>
+}
